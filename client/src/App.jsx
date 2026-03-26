@@ -1,7 +1,12 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import JobForm from './components/JobForm';
 import JobList from './components/JobList';
+import {
+  getJobs,
+  createJob,
+  updateJob,
+  deleteJob,
+} from './api';
 
 function App() {
   const [companyName, setCompanyName] = useState('');
@@ -21,8 +26,8 @@ function App() {
     setError(''); //clear any old error before a new request
 
     try {
-      const response = await axios.get('http://localhost:5000/job-applications');
-      setJobs(response.data);
+      const data = await getJobs();
+      setJobs(data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
       setError('Failed to load jobs.')
@@ -42,14 +47,11 @@ function App() {
 
     try {
       if (editingJob) {
-        await axios.put(
-          `http://localhost:5000/job-applications/${editingJob._id}`,
-          jobData
-        );
+        await updateJob(editingJob._id,jobData);
         setEditingJob(null);
       } else {
         //sends request to backendw
-        await axios.post('http://localhost:5000/job-applications', jobData);
+        await createJob(jobData);
       }
       fetchJobs(); // refresh from DB
       //reset form 
@@ -84,7 +86,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/job-applications/${id}`);
+      await deleteJob(id);
       fetchJobs(); // refresh list
     } catch (error) {
       console.error('Error deleting job:', error);
