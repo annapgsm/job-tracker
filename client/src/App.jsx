@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import JobForm from './components/JobForm';
 import JobList from './components/JobList';
+import Modal from './components/modal';
 import {
   getJobs,
   createJob,
@@ -29,6 +30,7 @@ function App() {
   const [editingJob, setEditingJob] = useState(null);
   const [formError, setFormError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchJobs();
@@ -83,8 +85,9 @@ function App() {
       }
 
       fetchJobs(); // refresh from DB
-      //reset form 
-      setFormData(initialFormData);
+      setFormData(initialFormData); //reset form 
+      setIsModalOpen(false); //close Modal
+
     } catch (error) {
       console.error('Error adding job:', error);
       setFormError('Failed to save job.');
@@ -119,12 +122,12 @@ function App() {
       notes: job.notes || '',
       status: job.status || 'Saved',
     });
+    setFormError('');
+    setIsModalOpen(true);
   };
 
   const handleCancelEdit = () => {
-    setEditingJob(null);
-    setFormData(initialFormData);
-    setFormError('');
+    closeModal();
   };
 
   /* old delete- updated state only 
@@ -143,20 +146,42 @@ function App() {
     }
   };
 
+  const openAddModal = () => { //used when user clicks 'Add job'
+    setEditingJob(null);
+    setFormData(initialFormData);
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingJob(null);
+    setFormData(initialFormData);
+    setFormError('');
+  };
+
   return (
     <div className="container">
       <h1>Job Tracker</h1>
 
-      <JobForm 
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        editingJob={editingJob}
-        handleCancelEdit={handleCancelEdit}
-        formError={formError}
-        setFormError={setFormError}
-        isSaving={isSaving}
-      />
+      <button type="button" onClick={openAddModal}>
+        Add Job
+      </button>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <JobForm 
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          editingJob={editingJob}
+          handleCancelEdit={handleCancelEdit}
+          formError={formError}
+          setFormError={setFormError}
+          isSaving={isSaving}
+        />  
+      </Modal>
+      
+
       <JobList 
         jobs={jobs} 
         handleEdit={handleEdit}

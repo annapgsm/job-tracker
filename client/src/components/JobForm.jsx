@@ -16,23 +16,26 @@ function JobForm({
 
         <form onSubmit={handleSubmit}>
             <input
-            type="text"
-            placeholder="Company Name *"
-            value={FormData.companyName}
-            disabled={isSaving}
-            onChange={handleChange}
-            />
-
-            <input
-            type="text"
-            placeholder="Job Title* "
-            value={formData.jobTitle}
-            disabled={isSaving}
-            onChange={handleChange}
+                type="text"
+                name="companyName"
+                placeholder="Company Name *"
+                value={formData.companyName}
+                disabled={isSaving}
+                onChange={handleChange}
             />
 
             <input
                 type="text"
+                name="jobTitle"
+                placeholder="Job Title* "
+                value={formData.jobTitle}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <input
+                type="text"
+                name="jobLink"
                 placeholder="Job Link"
                 value={formData.jobLink}
                 disabled={isSaving}
@@ -41,6 +44,7 @@ function JobForm({
 
             <textarea
                 placeholder="Job Description"
+                name="jobDescription"
                 value={formData.jobDescription}
                 disabled={isSaving}
                 onChange={handleChange}
@@ -48,6 +52,7 @@ function JobForm({
 
             <input
                 type="number"
+                name="salary"
                 placeholder="Salary"
                 value={formData.salary}
                 disabled={isSaving}
@@ -56,6 +61,7 @@ function JobForm({
 
             <input
                 type="text"
+                name="platform"
                 placeholder="Platform"
                 value={formData.platform}
                 disabled={isSaving}
@@ -64,6 +70,7 @@ function JobForm({
 
             <input
                 type="text"
+                name="location"
                 placeholder="Location"
                 value={formData.location}
                 disabled={isSaving}
@@ -72,6 +79,7 @@ function JobForm({
 
             <textarea
                 placeholder="Additional Notes"
+                name="notes"
                 value={formData.notes}
                 disabled={isSaving}
                 onChange={handleChange}
@@ -79,6 +87,7 @@ function JobForm({
 
 
             <select 
+                name="status"
                 value={formData.status}
                 disabled={isSaving} 
                 onChange={handleChange}
@@ -90,15 +99,15 @@ function JobForm({
                 <option>Rejected</option>
             </select>
 
-            <button type="submit" disabled={isSaving}>
-                {editingJob ? 'Saving...' : editingJob ? 'Update Job' : 'Add'}
-            </button>
-
-            {editingJob && (
-                <button type="button" onClick={handleCancelEdit}>
+            <div className="form-actions">
+                <button type="submit" disabled={isSaving}>
+                    {isSaving ? 'Saving...' : editingJob ? 'Update Job' : 'Add'}
+                </button>
+    
+                <button type="button" onClick={handleCancelEdit} disabled={isSaving}>
                     Cancel
                 </button>
-            )}
+            </div>    
         </form>
     </div>
   );
