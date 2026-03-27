@@ -8,10 +8,21 @@ import {
   deleteJob,
 } from './api';
 
+const initialFormData = {
+  companyName: '',
+  jobTitle: '',
+  jobLink: '',
+  jobDescription: '',
+  salary: '',
+  platform: '',
+  location: '',
+  notes: '',
+  status: 'Saved',
+};
+
 function App() {
-  const [companyName, setCompanyName] = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [status, setStatus] = useState('Applied');
+
+  const [formData, setFormData] = useState(initialFormData);
   const [jobs, setJobs] = useState([]); //full list of job applications
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -43,15 +54,21 @@ function App() {
     e.preventDefault();
     setFormError('');
 
-    if(!companyName.trim() || !jobTitle.trim()) {
+    if(!formData.companyName.trim() || !formData.jobTitle.trim()) {
       setFormError('Company and job title are required.');
       return;
     }
 
     const jobData = {
-      companyName: companyName.trim(), 
-      jobTitle: jobTitle.trim(),
-      status,
+      companyName: formData.companyName.trim(), 
+      jobTitle: formData.jobTitle.trim(),
+      jobLink: formData.jobLink.trim(),
+      jobDescription: formData.jobDescription.trim(),
+      salary: formData.salary ? Number(formData.salary) : undefined,
+      platform: formData.platform.trim(),
+      location: formData.location.trim(),
+      notes: formData.notes.trim(),
+      status: formData.status,
     };
 
     setIsSaving(true);
@@ -67,9 +84,7 @@ function App() {
 
       fetchJobs(); // refresh from DB
       //reset form 
-      setCompanyName('');
-      setJobTitle('');
-      setStatus('Applied');
+      setFormData(initialFormData);
     } catch (error) {
       console.error('Error adding job:', error);
       setFormError('Failed to save job.');
@@ -78,18 +93,38 @@ function App() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (formError) {
+      setFormError('');
+    }
+  };
+
   const handleEdit = (job) => {
     setEditingJob(job);
-    setCompanyName(job.companyName);
-    setJobTitle(job.jobTitle);
-    setStatus(job.status);
-  }
+    setFormData({
+      companyName: job.companyName || '',
+      jobTitle: job.jobTitle || '',
+      jobLink: job.jobLink || '',
+      jobDescription: job.jobDescription || '',
+      salary: job.salary || '',
+      platform: job.platform || '',
+      location: job.location || '',
+      notes: job.notes || '',
+      status: job.status || 'Saved',
+    });
+  };
 
   const handleCancelEdit = () => {
     setEditingJob(null);
-    setCompany('');
-    setPosition('');
-    setStatus('Applied');
+    setFormData(initialFormData);
+    setFormError('');
   };
 
   /* old delete- updated state only 
@@ -113,12 +148,8 @@ function App() {
       <h1>Job Tracker</h1>
 
       <JobForm 
-        companyName={companyName}
-        setCompanyName={setCompanyName}
-        jobTitle={jobTitle}
-        setJobTitle={setJobTitle}
-        status={status}
-        setStatus={setStatus}
+        formData={formData}
+        handleChange={handleChange}
         handleSubmit={handleSubmit}
         editingJob={editingJob}
         handleCancelEdit={handleCancelEdit}

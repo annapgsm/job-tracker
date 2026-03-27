@@ -72,10 +72,3 @@ button:disabled {
   gap:
    10px;
 }
-.status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: inline-block;
-  margin-top: 6px;
-}

@@ -1,10 +1,6 @@
 function JobForm({
-    companyName,
-    setCompanyName,
-    jobTitle,
-    setJobTitle,
-    status,
-    setStatus,
+    formData, 
+    handleChange,
     handleSubmit,
     editingJob,
     handleCancelEdit,
@@ -14,37 +10,78 @@ function JobForm({
 }) {
     return (
         <div className="form-section">
-        <h2>Add Job</h2>
+        <h2>{editingJob ? 'Edit Job' : 'Add Job'}</h2>
 
         {formError && <p className="form-error">{formError}</p>}
 
         <form onSubmit={handleSubmit}>
             <input
             type="text"
-            placeholder="Company Name"
-            value={companyName}
+            placeholder="Company Name *"
+            value={FormData.companyName}
             disabled={isSaving}
-            onChange={(e) => {
-                setCompanyName(e.target.value);
-                if (formError) setFormError('');
-            }}
+            onChange={handleChange}
             />
 
             <input
             type="text"
-            placeholder="Job Title"
-            value={jobTitle}
+            placeholder="Job Title* "
+            value={formData.jobTitle}
             disabled={isSaving}
-            onChange={(e) => {
-                setJobTitle(e.target.value)
-                if (formError) setFormError('');
-            }}
+            onChange={handleChange}
             />
 
-            <select 
-                value={status} 
-                onChange={(e) => setStatus(e.target.value)}
+            <input
+                type="text"
+                placeholder="Job Link"
+                value={formData.jobLink}
                 disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <textarea
+                placeholder="Job Description"
+                value={formData.jobDescription}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <input
+                type="number"
+                placeholder="Salary"
+                value={formData.salary}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <input
+                type="text"
+                placeholder="Platform"
+                value={formData.platform}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <input
+                type="text"
+                placeholder="Location"
+                value={formData.location}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+            <textarea
+                placeholder="Additional Notes"
+                value={formData.notes}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
+
+            <select 
+                value={formData.status}
+                disabled={isSaving} 
+                onChange={handleChange}
             >
                 <option>Saved</option>
                 <option>Applied</option>
