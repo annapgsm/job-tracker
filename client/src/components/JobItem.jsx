@@ -1,17 +1,19 @@
 function JobItem({ job, handleDelete, handleEdit }) {
   return (
-    <div>
+    <div className="job-card">
       <h3>{job.companyName}</h3>
       <p>{job.jobTitle}</p>
-      <p>{job.status}</p>
+      <span className="status">{job.status}</span>
 
-      <button type="button" onClick={() => handleEdit(job)}>
-        Edit
-      </button>
-      
-      <button type="button" onClick={() => handleDelete(job._id)}>
-        Delete
-      </button>
+      <div className="actions">
+        <button type="button" onClick={() => handleEdit(job)}>
+          Edit
+        </button>
+        
+        <button type="button" onClick={() => handleDelete(job._id)}>
+          Delete
+        </button>
+      </div>
     </div>
   );
 }

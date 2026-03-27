@@ -16,12 +16,15 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [editingJob, setEditingJob] = useState(null);
-  
+  const [formError, setFormError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
     fetchJobs();
   }, []);
 
   const fetchJobs = async () => {
+
     setLoading(true);
     setError(''); //clear any old error before a new request
 
@@ -38,12 +41,20 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+
+    if(!companyName.trim() || !jobTitle.trim()) {
+      setFormError('Company and job title are required.');
+      return;
+    }
 
     const jobData = {
-      companyName, 
-      jobTitle,
-      status
+      companyName: companyName.trim(), 
+      jobTitle: jobTitle.trim(),
+      status,
     };
+
+    setIsSaving(true);
 
     try {
       if (editingJob) {
@@ -53,6 +64,7 @@ function App() {
         //sends request to backendw
         await createJob(jobData);
       }
+
       fetchJobs(); // refresh from DB
       //reset form 
       setCompanyName('');
@@ -60,7 +72,10 @@ function App() {
       setStatus('Applied');
     } catch (error) {
       console.error('Error adding job:', error);
-    };
+      setFormError('Failed to save job.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleEdit = (job) => {
@@ -107,6 +122,9 @@ function App() {
         handleSubmit={handleSubmit}
         editingJob={editingJob}
         handleCancelEdit={handleCancelEdit}
+        formError={formError}
+        setFormError={setFormError}
+        isSaving={isSaving}
       />
       <JobList 
         jobs={jobs} 

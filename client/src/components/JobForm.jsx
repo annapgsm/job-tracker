@@ -8,26 +8,44 @@ function JobForm({
     handleSubmit,
     editingJob,
     handleCancelEdit,
+    formError,
+    setFormError,
+    isSaving,
 }) {
     return (
         <div className="form-section">
         <h2>Add Job</h2>
+
+        {formError && <p className="form-error">{formError}</p>}
+
         <form onSubmit={handleSubmit}>
             <input
             type="text"
             placeholder="Company Name"
             value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
+            disabled={isSaving}
+            onChange={(e) => {
+                setCompanyName(e.target.value);
+                if (formError) setFormError('');
+            }}
             />
 
             <input
             type="text"
             placeholder="Job Title"
             value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
+            disabled={isSaving}
+            onChange={(e) => {
+                setJobTitle(e.target.value)
+                if (formError) setFormError('');
+            }}
             />
 
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <select 
+                value={status} 
+                onChange={(e) => setStatus(e.target.value)}
+                disabled={isSaving}
+            >
                 <option>Saved</option>
                 <option>Applied</option>
                 <option>Interview</option>
@@ -35,8 +53,8 @@ function JobForm({
                 <option>Rejected</option>
             </select>
 
-            <button type="submit">
-                {editingJob ? 'Update Job' : 'Add'}
+            <button type="submit" disabled={isSaving}>
+                {editingJob ? 'Saving...' : editingJob ? 'Update Job' : 'Add'}
             </button>
 
             {editingJob && (
