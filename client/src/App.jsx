@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import JobForm from './components/JobForm';
 import JobList from './components/JobList';
-import Modal from './components/modal';
+import Dialog from './components/Dialog';
 import KanbanBoard from './components/KanbanBoard';
 import JobDetails from './components/JobDetails';
 import JobTable from './components/JobTable';
@@ -210,8 +210,8 @@ function App() {
         </button>
       </div>
 
-      {/* FORM MODAL */}
-      <Modal isOpen={isFormModalOpen} onClose={closeFormModal}>
+      {/* FORM */}
+      <Dialog isOpen={isFormModalOpen} onClose={closeFormModal}>
         <JobForm 
           formData={formData}
           handleChange={handleChange}
@@ -222,10 +222,10 @@ function App() {
           setFormError={setFormError}
           isSaving={isSaving}
         />  
-      </Modal>
+      </Dialog>
 
-      {/* DETAILS MODAL */}
-      <Modal
+      {/* DETAILS */}
+      <Dialog
         isOpen={isDetailsModalOpen} 
         onClose={closeDetailsModal}
       >
@@ -233,7 +233,7 @@ function App() {
           job={selectedJob}
           onClose={closeDetailsModal}
         />
-      </Modal>
+      </Dialog>
       
       {view === 'kanban' ? (
         <KanbanBoard

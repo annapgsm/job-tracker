@@ -1,4 +1,4 @@
-function Modal({ isOpen, onClose, children }) {
+function Dialog({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
@@ -13,4 +13,4 @@ function Modal({ isOpen, onClose, children }) {
   );
 }
 
-export default Modal;
+export default Dialog;
