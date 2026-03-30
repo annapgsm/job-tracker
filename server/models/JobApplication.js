@@ -31,7 +31,12 @@ const jobApplicationSchema = new mongoose.Schema(
             trim: true, 
             default: "",
         },
-        loaction: {
+        location: {
+            type: String, 
+            trim: true, 
+            default: "",
+        },
+        contact: {
             type: String, 
             trim: true, 
             default: "",
@@ -46,10 +51,15 @@ const jobApplicationSchema = new mongoose.Schema(
             trim: true,
             default: "",
         },
-    },
-    { 
-        timestamp: true,
-    } 
+        dateSaved: {
+            type: Date,
+            default: Date.now,
+        },
+        dateUpdated: {
+            type: Date,
+            default: null,
+        },
+    }
 );
 
 module.exports = mongoose.model("JobApplication", jobApplicationSchema);

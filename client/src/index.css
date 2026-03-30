@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 1200px;
   margin: 40px auto;
   background: white;
   padding: 20px;
@@ -105,4 +105,57 @@ button:disabled {
   border: none;
   font-size: 24px;
   cursor: pointer;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.kanban-column {
+  min-width: 205px;
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.kanban-card {
+  background: white;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+.table-wrapper {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.job-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.job-table th,
+.job-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.job-table th {
+  background: #f7f7f7;
+  font-weight: 600;
+}
+
+.table-row-clickable {
+  cursor: pointer;
+}
+
+.table-row-clickable:hover {
+  background: #fafafa;
 }

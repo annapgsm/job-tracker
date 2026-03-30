@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import JobForm from './components/JobForm';
 import JobList from './components/JobList';
 import Modal from './components/modal';
+import KanbanBoard from './components/KanbanBoard';
+import JobDetails from './components/JobDetails';
+import JobTable from './components/JobTable';
+
 import {
   getJobs,
   createJob,
@@ -17,6 +21,7 @@ const initialFormData = {
   salary: '',
   platform: '',
   location: '',
+  contact: '',
   notes: '',
   status: 'Saved',
 };
@@ -27,22 +32,26 @@ function App() {
   const [jobs, setJobs] = useState([]); //full list of job applications
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [editingJob, setEditingJob] = useState(null);
-  const [formError, setFormError] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState(null); //which job is being edited
+  const [formError, setFormError] = useState(''); //validation/ submit error in JobForm
+  const [isSaving, setIsSaving] = useState(false); //disable form while saving
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false); //-> controls JobForm
+  const [selectedJob, setSelectedJob] = useState(null); //-> controls JobDetails
+  const [view, setView] = useState('kanban');
+  const isDetailsModalOpen = selectedJob !== null;
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, []); // runs once when app first loads 
+
 
   const fetchJobs = async () => {
-
     setLoading(true);
     setError(''); //clear any old error before a new request
 
     try {
-      const data = await getJobs();
+      const data = await getJobs(); //calls the backend
+      console.log(data);
       setJobs(data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -52,6 +61,7 @@ function App() {
     }
   };
 
+  //Main form submit logic, passed to JobForm 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
@@ -69,6 +79,7 @@ function App() {
       salary: formData.salary ? Number(formData.salary) : undefined,
       platform: formData.platform.trim(),
       location: formData.location.trim(),
+      contact: formData.contact.trim(),
       notes: formData.notes.trim(),
       status: formData.status,
     };
@@ -84,9 +95,9 @@ function App() {
         await createJob(jobData);
       }
 
-      fetchJobs(); // refresh from DB
+      await fetchJobs(); // refresh from DB
       setFormData(initialFormData); //reset form 
-      setIsModalOpen(false); //close Modal
+      setIsFormModalOpen(false); //close Modal
 
     } catch (error) {
       console.error('Error adding job:', error);
@@ -96,8 +107,9 @@ function App() {
     }
   };
 
+  //Update the correct field inside formData, passed to JobForm
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; //input must have name="..."
 
     setFormData((prev) => ({
       ...prev,
@@ -109,9 +121,10 @@ function App() {
     }
   };
 
+  //Prepares Form Modal to edit existing job, passed to KanbanBoard and JobTable
   const handleEdit = (job) => {
-    setEditingJob(job);
-    setFormData({
+    setEditingJob(job); //stores job in editingJob
+    setFormData({       //fills formData with that job's values
       companyName: job.companyName || '',
       jobTitle: job.jobTitle || '',
       jobLink: job.jobLink || '',
@@ -119,15 +132,12 @@ function App() {
       salary: job.salary || '',
       platform: job.platform || '',
       location: job.location || '',
+      contact: job.contact || '',
       notes: job.notes || '',
       status: job.status || 'Saved',
     });
     setFormError('');
-    setIsModalOpen(true);
-  };
-
-  const handleCancelEdit = () => {
-    closeModal();
+    setIsFormModalOpen(true);
   };
 
   /* old delete- updated state only 
@@ -135,30 +145,53 @@ function App() {
     const updatedJobs = jobs.filter((job, index) => index !== indexToDelete); //keep every item, except the one whose index matches the clicked button. 
     setJobs(updatedJobs);
   }
+
+  <JobList 
+        jobs={jobs} 
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        loading={loading}
+        error={error}
+      />
+
   */
 
+  //Delets job by id, then refreshed the joblist
   const handleDelete = async (id) => {
     try {
       await deleteJob(id);
-      fetchJobs(); // refresh list
+      await fetchJobs(); // refresh list
     } catch (error) {
       console.error('Error deleting job:', error);
     }
   };
 
+  //Prepared form modal for creating a new job
   const openAddModal = () => { //used when user clicks 'Add job'
     setEditingJob(null);
     setFormData(initialFormData);
     setFormError('');
-    setIsModalOpen(true);
+    setIsFormModalOpen(true); //opens the form modal, used in Add-Job button
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  //Closes form modal and resets all form/edit state, passed to Modal and JobForm
+  const closeFormModal = () => {
+    setIsFormModalOpen(false);
     setEditingJob(null);
     setFormData(initialFormData);
     setFormError('');
   };
+
+  //Stores a clicked Job in selectedJob state, passed to KanbanBoard and JobTable
+  const openDetailsModal = (job) => {
+    setSelectedJob(job);
+  };
+
+  //Closes details modal
+  const closeDetailsModal = () => {
+    setSelectedJob(null);
+  };
+
 
   return (
     <div className="container">
@@ -168,27 +201,56 @@ function App() {
         Add Job
       </button>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <div className="view-toggle">
+        <button type="button" onClick={() => setView('kanban')}>
+          Board
+        </button>
+        <button type="button" onClick={() => setView('table')}>
+          List
+        </button>
+      </div>
+
+      {/* FORM MODAL */}
+      <Modal isOpen={isFormModalOpen} onClose={closeFormModal}>
         <JobForm 
           formData={formData}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           editingJob={editingJob}
-          handleCancelEdit={handleCancelEdit}
+          closeFormModal={closeFormModal}
           formError={formError}
           setFormError={setFormError}
           isSaving={isSaving}
         />  
       </Modal>
-      
 
-      <JobList 
-        jobs={jobs} 
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        loading={loading}
-        error={error}
-      />
+      {/* DETAILS MODAL */}
+      <Modal
+        isOpen={isDetailsModalOpen} 
+        onClose={closeDetailsModal}
+      >
+        <JobDetails
+          job={selectedJob}
+          onClose={closeDetailsModal}
+        />
+      </Modal>
+      
+      {view === 'kanban' ? (
+        <KanbanBoard
+          jobs={jobs}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          openDetailsModal={openDetailsModal}
+        />
+      ) : (
+        <JobTable
+          jobs={jobs}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          openDetailsModal={openDetailsModal}
+        />
+      )}
+      
     </div>
   );
 }

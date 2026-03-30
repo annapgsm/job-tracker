@@ -3,7 +3,7 @@ function JobForm({
     handleChange,
     handleSubmit,
     editingJob,
-    handleCancelEdit,
+    closeFormModal,
     formError,
     setFormError,
     isSaving,
@@ -77,6 +77,15 @@ function JobForm({
                 onChange={handleChange}
             />
 
+            <input
+                type="text"
+                name="contact"
+                placeholder="Contact"
+                value={formData.contact}
+                disabled={isSaving}
+                onChange={handleChange}
+            />
+
             <textarea
                 placeholder="Additional Notes"
                 name="notes"
@@ -104,7 +113,7 @@ function JobForm({
                     {isSaving ? 'Saving...' : editingJob ? 'Update Job' : 'Add'}
                 </button>
     
-                <button type="button" onClick={handleCancelEdit} disabled={isSaving}>
+                <button type="button" onClick={closeFormModal} disabled={isSaving}>
                     Cancel
                 </button>
             </div>    

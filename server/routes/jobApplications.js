@@ -23,10 +23,12 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
+        req.body.dateUpdated = new Date();
+
         const updatedJob = await JobApplication.findByIdAndUpdate(
         req.params.id,
         req.body,
-        { returnDocument: "after" }
+        { new: true, runValidator: true} //new: true returns updated doc, runvalidator ensures schema validation applies on update
         );
 
         res.json(updatedJob);
