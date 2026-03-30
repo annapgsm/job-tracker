@@ -23,13 +23,14 @@ function JobTable({ jobs, handleEdit, handleDelete, openDetailsModal }) {
                 <th>Location</th>
                 <th>Created</th>
                 <th>Updated</th>
+                <th>Actions</th>
             </tr>
             </thead>
 
             <tbody>
             {sortedJobs.length === 0 ? (
                 <tr>
-                    <td colSpan="7">No jobs yet.</td>
+                    <td colSpan="8">No jobs yet.</td>
                 </tr>
             ) : (
                 sortedJobs.map((job) => (

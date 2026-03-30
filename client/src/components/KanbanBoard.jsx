@@ -1,7 +1,5 @@
-function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal }) {
+function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuses }) {
     
-    const statuses = ['Saved', 'Applied', 'Interview', 'Offer', 'Rejected'];
-
     const getLatestDate = (job) => job.dateUpdated || job.dateSaved;
 
     const sortedJobs = [...jobs].sort((a, b) => {

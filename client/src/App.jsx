@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import JobForm from './components/JobForm';
-import JobList from './components/JobList';
 import Dialog from './components/Dialog';
 import KanbanBoard from './components/KanbanBoard';
 import JobDetails from './components/JobDetails';
@@ -26,7 +25,9 @@ const initialFormData = {
   status: 'Saved',
 };
 
+
 function App() {
+  const statuses = ['Saved', 'Applied', 'Interview', 'Offer', 'Rejected'];
 
   const [formData, setFormData] = useState(initialFormData);
   const [jobs, setJobs] = useState([]); //full list of job applications
@@ -39,6 +40,9 @@ function App() {
   const [selectedJob, setSelectedJob] = useState(null); //-> controls JobDetails
   const [view, setView] = useState('kanban');
   const isDetailsModalOpen = selectedJob !== null;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
 
   useEffect(() => {
     fetchJobs();
@@ -193,22 +197,57 @@ function App() {
   };
 
 
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      job.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'All' || job.status === statusFilter;
+
+    return matchesSearch && matchesStatus; //only show job if it matches search and status filter
+  });
+
   return (
     <div className="container">
       <h1>Job Tracker</h1>
 
-      <button type="button" onClick={openAddModal}>
-        Add Job
-      </button>
+      <div className="top-bar">
+        <button type="button" onClick={openAddModal}>
+          Add Job
+        </button>
 
-      <div className="view-toggle">
-        <button type="button" onClick={() => setView('kanban')}>
-          Board
-        </button>
-        <button type="button" onClick={() => setView('table')}>
-          List
-        </button>
+        <div className="filters">
+          <input
+            type="text"
+            placeholder="Search company or title"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="All">All Statuses</option>
+            {statuses.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="view-toggle">
+          <button type="button" onClick={() => setView('kanban')}>
+            Board
+          </button>
+          <button type="button" onClick={() => setView('table')}>
+            List
+          </button>
+        </div>
       </div>
+
 
       {/* FORM */}
       <Dialog isOpen={isFormModalOpen} onClose={closeFormModal}>
@@ -237,14 +276,15 @@ function App() {
       
       {view === 'kanban' ? (
         <KanbanBoard
-          jobs={jobs}
+          jobs={filteredJobs}
+          statuses={statuses}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           openDetailsModal={openDetailsModal}
         />
       ) : (
         <JobTable
-          jobs={jobs}
+          jobs={filteredJobs}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           openDetailsModal={openDetailsModal}
