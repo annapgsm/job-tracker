@@ -162,6 +162,12 @@ function App() {
 
   //Delets job by id, then refreshed the joblist
   const handleDelete = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this job?');
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
       await deleteJob(id);
       await fetchJobs(); // refresh list
@@ -196,6 +202,10 @@ function App() {
     setSelectedJob(null);
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('All');
+  };
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
@@ -236,13 +246,29 @@ function App() {
               </option>
             ))}
           </select>
+
+          <button 
+            type="button" 
+            onClick={handleClearFilters}
+            disabled={searchTerm === '' && statusFilter === 'All'}
+          >
+            Clear
+          </button>
+
         </div>
 
         <div className="view-toggle">
-          <button type="button" onClick={() => setView('kanban')}>
+          <button
+            type="button"
+            onClick={() => setView('kanban')}
+            className={view === 'kanban' ? 'active' : ''}
+          >
             Board
           </button>
-          <button type="button" onClick={() => setView('table')}>
+          <button 
+            type="button" onClick={() => setView('table')}
+            className={view === 'table' ? 'active' : ''}
+          >
             List
           </button>
         </div>
@@ -273,6 +299,19 @@ function App() {
           onClose={closeDetailsModal}
         />
       </Dialog>
+
+      {/* loading state */}
+      {loading && <p>Loading jobs...</p>}
+
+      {/*result message */}
+      {filteredJobs.length === 0 ? (
+        <p>No jobs found for {searchTerm}</p>
+      ) : (
+        <p>
+          Showing {filteredJobs.length}{' '}
+          {filteredJobs.length === 1 ? 'job' : 'jobs'}
+        </p>
+      )}
       
       {view === 'kanban' ? (
         <KanbanBoard
@@ -285,6 +324,7 @@ function App() {
       ) : (
         <JobTable
           jobs={filteredJobs}
+          allJobs={jobs}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           openDetailsModal={openDetailsModal}

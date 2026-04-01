@@ -1,3 +1,5 @@
+import { FaEdit, FaTrash } from 'react-icons/fa';
+
 function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuses }) {
     
     const getLatestDate = (job) => job.dateUpdated || job.dateSaved;
@@ -23,36 +25,42 @@ function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuse
                     <div key={status} className="kanban-column">
                         <h3>{status}</h3>
 
-                        {columnJobs.map((job) => (
-                            <div 
-                                key={job._id} 
-                                className="kanban-card"
-                                onClick={() => openDetailsModal(job)}
-                            >
-                                <p>{job.companyName}</p>
-                                <p>{job.jobTitle}</p>
-
-                                <button 
-                                    type="button" 
-                                    onClick={(e) => { 
-                                        e.stopPropagation();
-                                        handleEdit(job);
-                                    }}
+                        {columnJobs.length === 0 ?(
+                            <p>No jobs in {status} yet.</p>
+                        ) :(
+                            columnJobs.map((job) => (
+                                <div 
+                                    key={job._id} 
+                                    className="kanban-card"
+                                    onClick={() => openDetailsModal(job)}
                                 >
-                                    Edit
-                                </button>
+                                    <p>{job.companyName}</p>
+                                    <p>{job.jobTitle}</p>
 
-                                <button 
-                                    type="button" 
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelete(job._id);
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        ))}
+                                    <button 
+                                        type="button" 
+                                        aria-label='Edit job'
+                                        onClick={(e) => { 
+                                            e.stopPropagation();
+                                            handleEdit(job);
+                                        }}
+                                    >
+                                        <FaEdit />
+                                    </button>
+
+                                    <button 
+                                        type="button" 
+                                        aria-label='Delete job'
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(job._id);
+                                        }}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                            ))
+                        )}
                     </div>
                 );
             })}
