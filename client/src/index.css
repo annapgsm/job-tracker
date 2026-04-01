@@ -34,11 +34,22 @@ button {
   font-size: 14px;
 }
 
+/* ===== GLOBAL BUTTON STYLE ===== */
 button {
   background: #568366;
   color: white;
   border: none;
   cursor: pointer;
+
+  /* match input feel */
+  border-radius: 10px;       /* same as inputs */
+  padding: 10px 14px;        /* similar size */
+  font-size: 14px;
+
+  transition: all 0.2s ease;
+}
+button:hover {
+  background: #4a7257;
 }
 
 .list-section div {
@@ -221,4 +232,70 @@ button:disabled {
 .view-toggle button.active {
   opacity: 1;
   font-weight: 600;
+}
+
+/* ===== FORM HEADER ===== */
+.form-section h2 {
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ===== FORM GROUPS ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #568366;
+}
+
+.form-group textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* ===== FORM ACTIONS ===== */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-actions button:last-child {
+  background: transparent;
+  color: #568366;
+  border: 1px solid #568366;
+}
+
+/* ===== FORM HEADER ALIGNMENT ===== */
+.form-section h2,
+.form-subtitle {
+  text-align: center;
 }
