@@ -23,7 +23,10 @@ function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuse
 
                 return (
                     <div key={status} className="kanban-column">
-                        <h3>{status}</h3>
+                        <h3 className="kanban-column-header">
+                            {status}
+                            <span className="kanban-count">{columnJobs.length}</span>
+                        </h3>
 
                         {columnJobs.length === 0 ?(
                             <p>No jobs in {status} yet.</p>
@@ -33,31 +36,47 @@ function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuse
                                     key={job._id} 
                                     className="kanban-card"
                                     onClick={() => openDetailsModal(job)}
-                                >
-                                    <p>{job.companyName}</p>
-                                    <p>{job.jobTitle}</p>
+                                >   
+                                    <div className="kanban-card-content">
+                                        <p className="kanban-company">{job.companyName}</p>
+                                        <p className="kanban-title">{job.jobTitle}</p>
+                                        
+                                        <div className="kanban-meta">
+                                            <span>{job.location || "Location not set"}</span>
+                                            <span>
+                                                Last activity:{' '}
+                                                {getLatestDate(job)
+                                                    ? new Date(getLatestDate(job)).toLocaleDateString()
+                                                    : '-'}
+                                            </span>
+                                        </div>
 
-                                    <button 
-                                        type="button" 
-                                        aria-label='Edit job'
-                                        onClick={(e) => { 
-                                            e.stopPropagation();
-                                            handleEdit(job);
-                                        }}
-                                    >
-                                        <FaEdit />
-                                    </button>
+                                        <div className="kanban-actions">
+                                            <button 
+                                                type="button"
+                                                aria-label="Edit job"
+                                                className="icon-button"
+                                                onClick={(e) => { 
+                                                    e.stopPropagation();
+                                                    handleEdit(job);
+                                                }}
+                                            >
+                                                <FaEdit />
+                                            </button>
 
-                                    <button 
-                                        type="button" 
-                                        aria-label='Delete job'
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(job._id);
-                                        }}
-                                    >
-                                        <FaTrash />
-                                    </button>
+                                            <button 
+                                                type="button" 
+                                                aria-label="Delete job"
+                                                className="icon-button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(job._id);
+                                                }}
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         )}

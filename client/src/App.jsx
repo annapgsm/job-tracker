@@ -25,6 +25,48 @@ const initialFormData = {
   status: 'Saved',
 };
 
+const mockJobs = [
+  {
+    _id: '1',
+    companyName: 'Google',
+    jobTitle: 'Creative Strategist',
+    platform: 'LinkedIn',
+    location: 'Berlin',
+    status: 'Saved',
+    dateSaved: '2026-04-01T10:00:00.000Z',
+    dateUpdated: null,
+  },
+  {
+    _id: '2',
+    companyName: 'Spotify',
+    jobTitle: 'Senior Copywriter',
+    platform: 'LinkedIn',
+    location: 'Berlin',
+    status: 'Applied',
+    dateSaved: '2026-03-30T09:00:00.000Z',
+    dateUpdated: '2026-04-02T08:30:00.000Z',
+  },
+  {
+    _id: '3',
+    companyName: 'Zalando',
+    jobTitle: 'Brand Copywriter',
+    platform: 'Indeed',
+    location: 'Berlin',
+    status: 'Interview',
+    dateSaved: '2026-03-28T14:00:00.000Z',
+    dateUpdated: null,
+  },
+  {
+    _id: '4',
+    companyName: 'N26',
+    jobTitle: 'Content Designer',
+    platform: 'Website',
+    location: 'Remote',
+    status: 'Rejected',
+    dateSaved: '2026-03-20T11:00:00.000Z',
+    dateUpdated: '2026-03-25T16:15:00.000Z',
+  },
+];
 
 function App() {
   const statuses = ['Saved', 'Applied', 'Interview', 'Offer', 'Rejected'];
@@ -44,10 +86,13 @@ function App() {
   const [statusFilter, setStatusFilter] = useState('All');
 
 
+  //useEffect(() => {
+    //fetchJobs();
+  //}, []); // runs once when app first loads 
+  
   useEffect(() => {
-    fetchJobs();
-  }, []); // runs once when app first loads 
-
+    setJobs(mockJobs);
+  }, []);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -303,7 +348,7 @@ function App() {
       {/* loading state */}
       {loading && <p>Loading jobs...</p>}
 
-      {/*result message */}
+      {/*result message 
       {filteredJobs.length === 0 ? (
         <p>No jobs found for {searchTerm}</p>
       ) : (
@@ -312,6 +357,7 @@ function App() {
           {filteredJobs.length === 1 ? 'job' : 'jobs'}
         </p>
       )}
+      */}
       
       {view === 'kanban' ? (
         <KanbanBoard

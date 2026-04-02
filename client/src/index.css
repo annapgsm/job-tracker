@@ -299,3 +299,112 @@ button:disabled {
 .form-subtitle {
   text-align: center;
 }
+
+/* ===== NARROW FORM ===== */
+.form-section {
+  max-width: 500px;   /* limits width */
+  margin: 0 auto;     /* centers it */
+}
+
+/* ===== KANBAN BOARD ===== */
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+.kanban-column {
+  min-width: 240px;
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.kanban-column h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+/* ===== KANBAN CARD ===== */
+
+.kanban-card {
+  background: white;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.kanban-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kanban-company {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.kanban-title {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.kanban-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #777;
+}
+
+/* ===== KANBAN ACTIONS ===== */
+.kanban-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.icon-button {
+  background: transparent;
+  color: #568366;
+  border: 1px solid #d7e3db;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.icon-button:hover {
+  background: #f3f7f4;
+}
+
+/* ===== COLUMN HEADER ===== */
+.kanban-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* count badge */
+.kanban-count {
+  background: #e9f1ec;
+  color: #568366;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
