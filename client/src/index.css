@@ -68,6 +68,7 @@ button:disabled {
   margin: 20px 0;
 }
 
+/* ===== FILTERS ===== */
 .filters {
   display: flex;
   align-items: center;
@@ -75,12 +76,26 @@ button:disabled {
   flex-wrap: wrap;
 }
 
-.filters input {
-  min-width: 220px;
+.filters-input,
+.filters-select {
+  min-width: 180px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.filters select {
-  min-width: 140px;
+.filters-input {
+  min-width: 240px;
+}
+
+.filters-input:focus,
+.filters-select:focus {
+  border-color: #568366;
+  background: white;
 }
 
 .filters button {
@@ -92,6 +107,8 @@ button:disabled {
 .filters button:hover {
   background: #f3f7f4;
 }
+
+/* ===== VIEW TOGGLE ===== */
 
 .view-toggle {
   display: flex;
