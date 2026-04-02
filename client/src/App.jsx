@@ -342,6 +342,14 @@ function App() {
         <JobDetails
           job={selectedJob}
           onClose={closeDetailsModal}
+          onEdit={(job) => {
+            closeDetailsModal();
+            handleEdit(job);
+          }}
+          onDelete={(id) => {
+            closeDetailsModal(); 
+            handleDelete(id);
+          }}
         />
       </Dialog>
 

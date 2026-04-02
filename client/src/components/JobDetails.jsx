@@ -1,27 +1,104 @@
-function JobDetails({ job, onClose }) {
+import { FaEdit, FaTrash } from 'react-icons/fa';
+
+function JobDetails({ job, onClose, onEdit, onDelete }) {
   if (!job) return null;
 
+  const getLatestDate = (job) => job.dateUpdated || job.dateSaved;
+
   return (
-    <div>
-      <h2>{job.companyName}</h2>
-      <p><strong>Job Title:</strong> {job.jobTitle}</p>
-      <p><strong>Status:</strong> {job.status}</p>
-      
-      {job.jobDescription && <p><strong>Description:</strong> {job.jobDescription}</p>}
+    <div className="job-details">
 
-      {job.location && <p><strong>Location:</strong> {job.location}</p>}
-      {job.salary && <p><strong>Salary:</strong> {job.salary}</p>}
-      {job.platform && <p><strong>Platform:</strong> {job.platform}</p>}
-      {job.contact && <p><strong>Contact:</strong> {job.contact}</p>}
-      {job.jobLink && <p><strong>Link:</strong> {job.jobLink}</p>}
+      <div className="job-details-header">
+        <p className="job-details-eyebrow">{job.status}</p>
+        <br/>
+        <h2>{job.companyName}</h2>
+        <p><strong>Job Title:</strong> {job.jobTitle}</p>
+      </div>  
 
-      {job.notes && <p><strong>Notes:</strong> {job.notes}</p>}
+      <div className="job-details-actions">
+        <button type="button" aria-label="Edit job" onClick={() => onEdit(job)}>
+          <FaEdit />
+        </button>
+        <button type="button" aria-label="Delete job" onClick={() => onDelete(job._id)}>
+          <FaTrash />
+        </button>
+      </div> 
 
-      {job.createdAt && (
-        <p><strong>Created:</strong> {new Date(job.createdAt).toLocaleDateString()}</p>
-      )}
+      <div className="job-details-content">
+        {(job.location || job.platform) && (
+          <div className="job-details-section">
+            <h3>Overview</h3>
+            {job.location && (
+              <p>
+                <span className="job-details-label">Location</span>
+                <span>{job.location}</span>
+              </p>
+            )}
+            {job.platform && (
+              <p>
+                <span className="job-details-label">Platform</span>
+                <span>{job.platform}</span>
+              </p>
+            )}
+            {job.salary && (
+              <p>
+                <span className="job-details-label">Salary</span>
+                <span>{job.salary}</span>
+              </p>
+            )}
+            {job.contact && (
+              <p>
+                <span className="job-details-label">Contact</span>
+                <span>{job.contact}</span>
+              </p>
+            )}
+          </div>
+        )}
 
-      <button type="button" onClick={onClose}>Close</button>
+        {job.jobLink && (
+          <div className="job-details-section">
+            <h3>Job Link</h3>
+            <a
+              href={job.jobLink}
+              target="_blank"
+              rel="noreferrer"
+              className="job-details-link"
+            >
+              Open job posting
+            </a>
+          </div>
+        )}
+
+        {job.jobDescription && (
+          <div className="job-details-section">
+            <h3>Description</h3>
+            <p>{job.jobDescription}</p>
+          </div>
+        )}
+
+        {job.notes && (
+          <div className="job-details-section">
+            <h3>Notes</h3>
+            <p>{job.notes}</p>
+          </div>
+        )}
+
+        <div className="job-details-section">
+          <h3>Activity</h3>
+          {job.dateSaved && (
+            <p>
+              <span className="job-details-label">Saved</span>
+              <span>{new Date(job.dateSaved).toLocaleDateString()}</span>
+            </p>
+          )}
+          {getLatestDate(job) && (
+            <p>
+              <span className="job-details-label">Last activity</span>
+              <span>{new Date(getLatestDate(job)).toLocaleDateString()}</span>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
