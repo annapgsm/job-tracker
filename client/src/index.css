@@ -275,6 +275,31 @@ button:disabled {
   background: #fafafa;
 }
 
+/* ===== TABLE ICON ACTIONS ===== */
+.table-icon-button {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  margin-right: 4px;
+  cursor: pointer;
+
+  color: #666; /* softer than main buttons */
+  border-radius: 6px;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.table-icon-button:hover {
+  background: #f3f7f4;
+  color: #568366;
+}
+
+/* delete */
+.table-icon-button.danger:hover {
+  color: #b42318;
+  background: #fdecea;
+}
+
 
 /* ===== KANBAN BOARD ===== */
 .kanban-board {
@@ -469,4 +494,62 @@ button:disabled {
 
 .job-details-link:hover {
   text-decoration: underline;
+}
+
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===== STATUS COLORS ===== */
+
+/* base style (used in details + optionally elsewhere) 
+.status-saved {
+  color: #C4B5A5;
+}
+
+.status-applied {
+  color: #7EB8C9;
+}
+
+.status-interview {
+  color: #E8A838;
+}
+
+.status-offer {
+  color: #5BA584;
+}
+
+.status-rejected {
+  color: #C4522A;
+}
+*/
+.status-saved {
+  color: #6b5f52;
+  background: #f3eee9;
+}
+
+.status-applied {
+  color: #3f7f91;
+  background: #e6f2f5;
+}
+
+.status-interview {
+  color: #a8761d;
+  background: #fff4e0;
+}
+
+.status-offer {
+  color: #3f7a5f;
+  background: #e6f3ed;
+}
+
+.status-rejected {
+  color: #9b3e22;
+  background: #fdebe5;
 }

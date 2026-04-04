@@ -86,13 +86,13 @@ function App() {
   const [statusFilter, setStatusFilter] = useState('All');
 
 
-  //useEffect(() => {
-    //fetchJobs();
-  //}, []); // runs once when app first loads 
-  
   useEffect(() => {
-    setJobs(mockJobs);
-  }, []);
+    fetchJobs();
+  }, []); // runs once when app first loads 
+  
+  // useEffect(() => {
+  //  setJobs(mockJobs);
+  // }, []);
 
   const fetchJobs = async () => {
     setLoading(true);

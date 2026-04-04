@@ -51,19 +51,24 @@ function JobTable({ jobs, allJobs, handleEdit, handleDelete, openDetailsModal })
                 >
                     <td>{job.companyName}</td>
                     <td>{job.jobTitle}</td>
-                    <td>{job.status}</td>
+                    <td>
+                        <span className={`status-badge status-${job.status.toLowerCase()}`}>
+                            {job.status}
+                        </span>
+                    </td>
                     <td>{job.platform || '-'}</td>
                     <td>{job.location || '-'}</td>
                     <td>{job.dateSaved ? new Date(job.dateSaved).toLocaleDateString() : '-'}</td>
                     <td>
                         {getLatestDate(job)
-                            ? new Date(getLatestDate(job)).toLocaleString()
+                            ? new Date(getLatestDate(job)).toLocaleDateString()
                             : '-'}
                     </td>
                     <td>
                         <button
                             type="button"
                             aria-label="Edit job"
+                            className="table-icon-button"
                             onClick={(e) => {
                             e.stopPropagation();
                             handleEdit(job);
@@ -75,6 +80,7 @@ function JobTable({ jobs, allJobs, handleEdit, handleDelete, openDetailsModal })
                         <button
                             type="button"
                             aria-label="Delete job"
+                            className="table-icon-button danger"
                             onClick={(e) => {
                             e.stopPropagation();
                             handleDelete(job._id);
