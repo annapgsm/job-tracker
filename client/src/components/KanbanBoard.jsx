@@ -24,7 +24,7 @@ function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuse
                 return (
                     <div key={status} className="kanban-column">
                         <h3 className="kanban-column-header">
-                            {status}
+                            <span>{status}</span>
                             <span className="kanban-count">{columnJobs.length}</span>
                         </h3>
 
@@ -34,7 +34,7 @@ function KanbanBoard({ jobs, handleEdit, handleDelete, openDetailsModal, statuse
                             columnJobs.map((job) => (
                                 <div 
                                     key={job._id} 
-                                    className="kanban-card"
+                                    className={`kanban-card status-${job.status.toLowerCase()}`}
                                     onClick={() => openDetailsModal(job)}
                                 >   
                                     <div className="kanban-card-content">
