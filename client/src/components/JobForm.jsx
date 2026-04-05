@@ -1,123 +1,164 @@
 function JobForm({
-    formData, 
-    handleChange,
-    handleSubmit,
-    editingJob,
-    closeFormModal,
-    formError,
-    setFormError,
-    isSaving,
+  formData,
+  handleChange,
+  handleSubmit,
+  editingJob,
+  closeFormModal,
+  formError,
+  isSaving,
 }) {
-    return (
-        <div className="form-section">
-        <h2>{editingJob ? 'Edit Job' : 'Add Job'}</h2>
+  return (
+    <div className="form-section">
+      <h2>{editingJob ? 'Edit Job' : 'Add Job'}</h2>
+      <p className="form-subtitle">
+        Fill in the details below to track your application
+      </p>
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="companyName">Company Name *</label>
+          <input
+            id="companyName"
+            type="text"
+            name="companyName"
+            placeholder="e.g. Google"
+            value={formData.companyName}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="jobTitle">Job Title *</label>
+          <input
+            id="jobTitle"
+            type="text"
+            name="jobTitle"
+            placeholder="e.g. Senior Copywriter"
+            value={formData.jobTitle}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="jobLink">Job Link</label>
+          <input
+            id="jobLink"
+            type="text"
+            name="jobLink"
+            placeholder="Paste the job posting URL"
+            value={formData.jobLink}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="jobDescription">Job Description</label>
+          <textarea
+            id="jobDescription"
+            name="jobDescription"
+            placeholder="Add a short summary of the role"
+            value={formData.jobDescription}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="salary">Salary</label>
+          <input
+            id="salary"
+            type="number"
+            name="salary"
+            placeholder="e.g. 65000"
+            value={formData.salary}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="platform">Platform</label>
+          <input
+            id="platform"
+            type="text"
+            name="platform"
+            placeholder="e.g. LinkedIn"
+            value={formData.platform}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="location">Location</label>
+          <input
+            id="location"
+            type="text"
+            name="location"
+            placeholder="e.g. Berlin"
+            value={formData.location}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="contact">Contact</label>
+          <input
+            id="contact"
+            type="text"
+            name="contact"
+            placeholder="Recruiter or contact name"
+            value={formData.contact}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="notes">Additional Notes</label>
+          <textarea
+            id="notes"
+            name="notes"
+            placeholder="Anything important to remember"
+            value={formData.notes}
+            disabled={isSaving}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="status">Status</label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            disabled={isSaving}
+            onChange={handleChange}
+          >
+            <option value="Saved">Saved</option>
+            <option value="Applied">Applied</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
 
         {formError && <p className="form-error">{formError}</p>}
 
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                name="companyName"
-                placeholder="Company Name *"
-                value={formData.companyName}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
+        <div className="form-actions">
+          <button type="submit" disabled={isSaving}>
+            {isSaving ? 'Saving...' : editingJob ? 'Update Job' : 'Add Job'}
+          </button>
 
-            <input
-                type="text"
-                name="jobTitle"
-                placeholder="Job Title* "
-                value={formData.jobTitle}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <input
-                type="text"
-                name="jobLink"
-                placeholder="Job Link"
-                value={formData.jobLink}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <textarea
-                placeholder="Job Description"
-                name="jobDescription"
-                value={formData.jobDescription}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <input
-                type="number"
-                name="salary"
-                placeholder="Salary"
-                value={formData.salary}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <input
-                type="text"
-                name="platform"
-                placeholder="Platform"
-                value={formData.platform}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <input
-                type="text"
-                name="location"
-                placeholder="Location"
-                value={formData.location}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <input
-                type="text"
-                name="contact"
-                placeholder="Contact"
-                value={formData.contact}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-            <textarea
-                placeholder="Additional Notes"
-                name="notes"
-                value={formData.notes}
-                disabled={isSaving}
-                onChange={handleChange}
-            />
-
-
-            <select 
-                name="status"
-                value={formData.status}
-                disabled={isSaving} 
-                onChange={handleChange}
-            >
-                <option>Saved</option>
-                <option>Applied</option>
-                <option>Interview</option>
-                <option>Offer</option>
-                <option>Rejected</option>
-            </select>
-
-            <div className="form-actions">
-                <button type="submit" disabled={isSaving}>
-                    {isSaving ? 'Saving...' : editingJob ? 'Update Job' : 'Add'}
-                </button>
-    
-                <button type="button" onClick={closeFormModal} disabled={isSaving}>
-                    Cancel
-                </button>
-            </div>    
-        </form>
+          <button type="button" onClick={closeFormModal} disabled={isSaving}>
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
