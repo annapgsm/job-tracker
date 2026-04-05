@@ -68,6 +68,7 @@ button:disabled {
   margin: 20px 0;
 }
 
+/* ===== FILTERS ===== */
 .filters {
   display: flex;
   align-items: center;
@@ -75,12 +76,26 @@ button:disabled {
   flex-wrap: wrap;
 }
 
-.filters input {
-  min-width: 220px;
+.filters-input,
+.filters-select {
+  min-width: 180px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.filters select {
-  min-width: 140px;
+.filters-input {
+  min-width: 240px;
+}
+
+.filters-input:focus,
+.filters-select:focus {
+  border-color: #568366;
+  background: white;
 }
 
 .filters button {
@@ -92,6 +107,8 @@ button:disabled {
 .filters button:hover {
   background: #f3f7f4;
 }
+
+/* ===== VIEW TOGGLE ===== */
 
 .view-toggle {
   display: flex;
@@ -256,6 +273,31 @@ button:disabled {
 
 .table-row-clickable:hover {
   background: #fafafa;
+}
+
+/* ===== TABLE ICON ACTIONS ===== */
+.table-icon-button {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  margin-right: 4px;
+  cursor: pointer;
+
+  color: #666; /* softer than main buttons */
+  border-radius: 6px;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.table-icon-button:hover {
+  background: #f3f7f4;
+  color: #568366;
+}
+
+/* delete */
+.table-icon-button.danger:hover {
+  color: #b42318;
+  background: #fdecea;
 }
 
 
@@ -452,4 +494,62 @@ button:disabled {
 
 .job-details-link:hover {
   text-decoration: underline;
+}
+
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===== STATUS COLORS ===== */
+
+/* base style (used in details + optionally elsewhere) 
+.status-saved {
+  color: #C4B5A5;
+}
+
+.status-applied {
+  color: #7EB8C9;
+}
+
+.status-interview {
+  color: #E8A838;
+}
+
+.status-offer {
+  color: #5BA584;
+}
+
+.status-rejected {
+  color: #C4522A;
+}
+*/
+.status-saved {
+  color: #6b5f52;
+  background: #f3eee9;
+}
+
+.status-applied {
+  color: #3f7f91;
+  background: #e6f2f5;
+}
+
+.status-interview {
+  color: #a8761d;
+  background: #fff4e0;
+}
+
+.status-offer {
+  color: #3f7a5f;
+  background: #e6f3ed;
+}
+
+.status-rejected {
+  color: #9b3e22;
+  background: #fdebe5;
 }

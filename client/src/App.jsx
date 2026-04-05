@@ -86,13 +86,13 @@ function App() {
   const [statusFilter, setStatusFilter] = useState('All');
 
 
-  //useEffect(() => {
-    //fetchJobs();
-  //}, []); // runs once when app first loads 
-  
   useEffect(() => {
-    setJobs(mockJobs);
-  }, []);
+    fetchJobs();
+  }, []); // runs once when app first loads 
+  
+  // useEffect(() => {
+  //  setJobs(mockJobs);
+  // }, []);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -275,12 +275,14 @@ function App() {
         <div className="filters">
           <input
             type="text"
+            className="filters-input"
             placeholder="Search company or title"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
           <select
+            className="filters-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
