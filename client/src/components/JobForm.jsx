@@ -13,6 +13,8 @@ function JobForm({
       <p className="form-subtitle">
         Fill in the details below to track your application
       </p>
+      
+      <br />
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
