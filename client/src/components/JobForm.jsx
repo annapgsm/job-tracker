@@ -3,18 +3,17 @@ function JobForm({
   handleChange,
   handleSubmit,
   editingJob,
-  closeFormModal,
   formError,
   isSaving,
 }) {
   return (
     <div className="form-section">
-      <h2>{editingJob ? 'Edit Job' : 'Add Job'}</h2>
-      <p className="form-subtitle">
-        Fill in the details below to track your application
-      </p>
-      
-      <br />
+      <div className="form-header">
+        <h2>{editingJob ? 'Edit Job' : 'Add Job'}</h2>
+        <p className="form-subtitle">
+          Fill in the details below to track your application.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -151,13 +150,9 @@ function JobForm({
 
         {formError && <p className="form-error">{formError}</p>}
 
-        <div className="form-actions">
-          <button type="submit" disabled={isSaving}>
+        <div className="form-actions form-actions--single">
+          <button type="submit" className="btn-primary form-submit-button" disabled={isSaving}>
             {isSaving ? 'Saving...' : editingJob ? 'Update Job' : 'Add Job'}
-          </button>
-
-          <button type="button" onClick={closeFormModal} disabled={isSaving}>
-            Cancel
           </button>
         </div>
       </form>

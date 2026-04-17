@@ -21,3 +21,18 @@ export const deleteJob = async (id) => {
   const response = await axios.delete(`${API_URL}/${id}`);
   return response.data;
 };
+
+
+export const archiveJob = async (id) => {
+  const response = await axios.put(`${API_URL}/${id}`, {
+    archived: true,
+  });
+  return response.data;
+};
+
+export const restoreJob = async (id) => {
+  const response = await axios.put(`${API_URL}/${id}`, {
+    archived: false,
+  });
+  return response.data;
+};

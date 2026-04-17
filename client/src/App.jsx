@@ -4,12 +4,15 @@ import Dialog from './components/Dialog';
 import KanbanBoard from './components/KanbanBoard';
 import JobDetails from './components/JobDetails';
 import JobTable from './components/JobTable';
+import Archive from './components/Archive';
 
 import {
   getJobs,
   createJob,
   updateJob,
   deleteJob,
+  archiveJob,
+  restoreJob,
 } from './api';
 
 const initialFormData = {
@@ -25,103 +28,54 @@ const initialFormData = {
   status: 'Saved',
 };
 
-const mockJobs = [
-  {
-    _id: '1',
-    companyName: 'Google',
-    jobTitle: 'Creative Strategist',
-    platform: 'LinkedIn',
-    location: 'Berlin',
-    status: 'Saved',
-    dateSaved: '2026-04-01T10:00:00.000Z',
-    dateUpdated: null,
-  },
-  {
-    _id: '2',
-    companyName: 'Spotify',
-    jobTitle: 'Senior Copywriter',
-    platform: 'LinkedIn',
-    location: 'Berlin',
-    status: 'Applied',
-    dateSaved: '2026-03-30T09:00:00.000Z',
-    dateUpdated: '2026-04-02T08:30:00.000Z',
-  },
-  {
-    _id: '3',
-    companyName: 'Zalando',
-    jobTitle: 'Brand Copywriter',
-    platform: 'Indeed',
-    location: 'Berlin',
-    status: 'Interview',
-    dateSaved: '2026-03-28T14:00:00.000Z',
-    dateUpdated: null,
-  },
-  {
-    _id: '4',
-    companyName: 'N26',
-    jobTitle: 'Content Designer',
-    platform: 'Website',
-    location: 'Remote',
-    status: 'Rejected',
-    dateSaved: '2026-03-20T11:00:00.000Z',
-    dateUpdated: '2026-03-25T16:15:00.000Z',
-  },
-];
-
 function App() {
   const statuses = ['Saved', 'Applied', 'Interview', 'Offer', 'Rejected'];
 
   const [formData, setFormData] = useState(initialFormData);
-  const [jobs, setJobs] = useState([]); //full list of job applications
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [editingJob, setEditingJob] = useState(null); //which job is being edited
-  const [formError, setFormError] = useState(''); //validation/ submit error in JobForm
-  const [isSaving, setIsSaving] = useState(false); //disable form while saving
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false); //-> controls JobForm
-  const [selectedJob, setSelectedJob] = useState(null); //-> controls JobDetails
+  const [editingJob, setEditingJob] = useState(null);
+  const [formError, setFormError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
   const [view, setView] = useState('kanban');
+  const [section, setSection] = useState('pipeline');
   const isDetailsModalOpen = selectedJob !== null;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-
   useEffect(() => {
     fetchJobs();
-  }, []); // runs once when app first loads 
-  
-  // useEffect(() => {
-  //  setJobs(mockJobs);
-  // }, []);
+  }, []);
 
   const fetchJobs = async () => {
     setLoading(true);
-    setError(''); //clear any old error before a new request
+    setError('');
 
     try {
-      const data = await getJobs(); //calls the backend
-      console.log(data);
+      const data = await getJobs();
       setJobs(data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
-      setError('Failed to load jobs.')
-    } finally { //runs whether sucess or failure happens
+      setError('Failed to load jobs.');
+    } finally {
       setLoading(false);
     }
   };
 
-  //Main form submit logic, passed to JobForm 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
 
-    if(!formData.companyName.trim() || !formData.jobTitle.trim()) {
+    if (!formData.companyName.trim() || !formData.jobTitle.trim()) {
       setFormError('Company and job title are required.');
       return;
     }
 
     const jobData = {
-      companyName: formData.companyName.trim(), 
+      companyName: formData.companyName.trim(),
       jobTitle: formData.jobTitle.trim(),
       jobLink: formData.jobLink.trim(),
       jobDescription: formData.jobDescription.trim(),
@@ -137,17 +91,15 @@ function App() {
 
     try {
       if (editingJob) {
-        await updateJob(editingJob._id,jobData);
+        await updateJob(editingJob._id, jobData);
         setEditingJob(null);
       } else {
-        //sends request to backendw
         await createJob(jobData);
       }
 
-      await fetchJobs(); // refresh from DB
-      setFormData(initialFormData); //reset form 
-      setIsFormModalOpen(false); //close Modal
-
+      await fetchJobs();
+      setFormData(initialFormData);
+      setIsFormModalOpen(false);
     } catch (error) {
       console.error('Error adding job:', error);
       setFormError('Failed to save job.');
@@ -156,9 +108,8 @@ function App() {
     }
   };
 
-  //Update the correct field inside formData, passed to JobForm
   const handleChange = (e) => {
-    const { name, value } = e.target; //input must have name="..."
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -170,10 +121,9 @@ function App() {
     }
   };
 
-  //Prepares Form Modal to edit existing job, passed to KanbanBoard and JobTable
   const handleEdit = (job) => {
-    setEditingJob(job); //stores job in editingJob
-    setFormData({       //fills formData with that job's values
+    setEditingJob(job);
+    setFormData({
       companyName: job.companyName || '',
       jobTitle: job.jobTitle || '',
       jobLink: job.jobLink || '',
@@ -189,47 +139,48 @@ function App() {
     setIsFormModalOpen(true);
   };
 
-  /* old delete- updated state only 
-  const handleDelete = (indexToDelete) => {
-    const updatedJobs = jobs.filter((job, index) => index !== indexToDelete); //keep every item, except the one whose index matches the clicked button. 
-    setJobs(updatedJobs);
-  }
+  const handleArchive = async (id) => {
+    const confirmed = window.confirm('Move this job to archive?');
 
-  <JobList 
-        jobs={jobs} 
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        loading={loading}
-        error={error}
-      />
+    if (!confirmed) return;
 
-  */
-
-  //Delets job by id, then refreshed the joblist
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm('Are you sure you want to delete this job?');
-
-    if (!confirmed) {
-      return;
+    try {
+      await archiveJob(id);
+      await fetchJobs();
+    } catch (error) {
+      console.error('Error archiving job:', error);
     }
+  };
+
+  const handlePermanentDelete = async (id) => {
+    const confirmed = window.confirm('Permanently delete this job? This cannot be undone.');
+
+    if (!confirmed) return;
 
     try {
       await deleteJob(id);
-      await fetchJobs(); // refresh list
+      await fetchJobs();
     } catch (error) {
-      console.error('Error deleting job:', error);
+      console.error('Error deleting job permanently:', error);
     }
   };
 
-  //Prepared form modal for creating a new job
-  const openAddModal = () => { //used when user clicks 'Add job'
+  const handleRestore = async (id) => {
+    try {
+      await restoreJob(id);
+      await fetchJobs();
+    } catch (error) {
+      console.error('Error restoring job:', error);
+    }
+  };
+
+  const openAddModal = () => {
     setEditingJob(null);
     setFormData(initialFormData);
     setFormError('');
-    setIsFormModalOpen(true); //opens the form modal, used in Add-Job button
+    setIsFormModalOpen(true);
   };
 
-  //Closes form modal and resets all form/edit state, passed to Modal and JobForm
   const closeFormModal = () => {
     setIsFormModalOpen(false);
     setEditingJob(null);
@@ -237,12 +188,10 @@ function App() {
     setFormError('');
   };
 
-  //Stores a clicked Job in selectedJob state, passed to KanbanBoard and JobTable
   const openDetailsModal = (job) => {
     setSelectedJob(job);
   };
 
-  //Closes details modal
   const closeDetailsModal = () => {
     setSelectedJob(null);
   };
@@ -251,8 +200,10 @@ function App() {
     setSearchTerm('');
     setStatusFilter('All');
   };
+  const activeJobs = jobs.filter((job) => !job.archived);
+  const archivedJobs = jobs.filter((job) => job.archived);
 
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = activeJobs.filter((job) => {
     const matchesSearch =
       job.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
@@ -260,133 +211,223 @@ function App() {
     const matchesStatus =
       statusFilter === 'All' || job.status === statusFilter;
 
-    return matchesSearch && matchesStatus; //only show job if it matches search and status filter
+    return matchesSearch && matchesStatus;
   });
 
+  async function handleMoveJob(jobId, newStatus) {
+    const currentJob = jobs.find((job) => job._id === jobId);
+
+    if (!currentJob) return;
+    if (currentJob.status === newStatus) return;
+
+    const previousJobs = jobs;
+    const optimisticDate = new Date().toISOString();
+
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job._id === jobId
+          ? {
+              ...job,
+              status: newStatus,
+              dateUpdated: optimisticDate,
+            }
+          : job
+      )
+    );
+
+    try {
+      setError('');
+      const updatedJob = await updateJob(jobId, {
+        ...currentJob,
+        status: newStatus,
+      });
+
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job._id === jobId ? { ...job, ...updatedJob } : job
+        )
+      );
+    } catch (error) {
+      console.error('Failed to move job:', error);
+      setJobs(previousJobs);
+      setError('Could not update job status. Please try again.');
+    }
+  }
+
   return (
-    <div className="container">
-      <h1>Job Tracker</h1>
-
-      <div className="top-bar">
-        <button type="button" onClick={openAddModal}>
-          Add Job
-        </button>
-
-        <div className="filters">
-          <input
-            type="text"
-            className="filters-input"
-            placeholder="Search company or title"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          <select
-            className="filters-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="All">All Statuses</option>
-            {statuses.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-
-          <button 
-            type="button" 
-            onClick={handleClearFilters}
-            disabled={searchTerm === '' && statusFilter === 'All'}
-          >
-            Clear
-          </button>
-
+    <div className="app-container">
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="app-logo">J</div>
+          <div className="app-name">JobTrack</div>
         </div>
 
-        <div className="view-toggle">
+        <nav className="nav-section">
+          <div className="nav-label">Workspace</div>
+
           <button
             type="button"
-            onClick={() => setView('kanban')}
-            className={view === 'kanban' ? 'active' : ''}
+            className={`nav-item ${section === 'pipeline' ? 'active' : ''}`}
+            onClick={() => setSection('pipeline')}
           >
-            Board
+            <span className="nav-icon" aria-hidden="true">💼</span>
+            Job Pipeline
           </button>
-          <button 
-            type="button" onClick={() => setView('table')}
-            className={view === 'table' ? 'active' : ''}
+
+          <button
+            type="button"
+            className={`nav-item ${section === 'archive' ? 'active' : ''}`}
+            onClick={() => setSection('archive')}
           >
-            List
+            <span className="nav-icon" aria-hidden="true">📥</span>
+            Archived Jobs
           </button>
+        </nav>
+      </aside>
+
+      <main className="main-content">
+        <header className="header">
+          <div className="header-left">
+            <h1 className="page-title">
+              {section === 'pipeline' ? 'Job Pipeline' : 'Archive'}
+            </h1>
+
+            {section === 'pipeline' && (
+              <div className="view-toggle">
+                <button
+                  type="button"
+                  onClick={() => setView('kanban')}
+                  className={view === 'kanban' ? 'active' : ''}
+                >
+                  Board
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView('table')}
+                  className={view === 'table' ? 'active' : ''}
+                >
+                  List
+                </button>
+              </div>
+            )}
+          </div>
+
+          {section === 'pipeline' && (
+            <div className="header-controls">
+              <div className="search-wrapper">
+                <span className="search-icon" aria-hidden="true">🔍</span>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search companies or titles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              <select
+                className="filter-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All Jobs</option>
+                {statuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleClearFilters}
+                disabled={searchTerm === '' && statusFilter === 'All'}
+              >
+                Clear
+              </button>
+
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={openAddModal}
+              >
+                <span aria-hidden="true">+</span>
+                Add Job
+              </button>
+            </div>
+          )}
+        </header>
+
+        <div className="content">
+          {error && <p className="feedback-message error-message">{error}</p>}
+          {loading && <p className="feedback-message">Loading jobs...</p>}
+
+          {!loading && section === 'archive' && (
+            <Archive
+              jobs={archivedJobs}
+              onRestore={handleRestore}
+              onDelete={handlePermanentDelete}
+              openDetailsModal={openDetailsModal}
+            />
+          )}
+
+          {!loading && section === 'pipeline' && (
+            <>
+              {view === 'kanban' ? (
+                <KanbanBoard
+                  jobs={filteredJobs}
+                  statuses={statuses}
+                  handleEdit={handleEdit}
+                  handleDelete={handleArchive}
+                  openDetailsModal={openDetailsModal}
+                  onMoveJob={handleMoveJob}
+                />
+              ) : (
+                <JobTable
+                  jobs={filteredJobs}
+                  allJobs={jobs}
+                  handleEdit={handleEdit}
+                  handleDelete={handleArchive}
+                  openDetailsModal={openDetailsModal}
+                />
+              )}
+            </>
+          )}
         </div>
-      </div>
 
+        <Dialog isOpen={isFormModalOpen} onClose={closeFormModal}>
+          <JobForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            editingJob={editingJob}
+            formError={formError}
+            setFormError={setFormError}
+            isSaving={isSaving}
+          />
+        </Dialog>
 
-      {/* FORM */}
-      <Dialog isOpen={isFormModalOpen} onClose={closeFormModal}>
-        <JobForm 
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          editingJob={editingJob}
-          closeFormModal={closeFormModal}
-          formError={formError}
-          setFormError={setFormError}
-          isSaving={isSaving}
-        />  
-      </Dialog>
+        <Dialog isOpen={isDetailsModalOpen} onClose={closeDetailsModal}>
+          <JobDetails
+            job={selectedJob}
+            onClose={closeDetailsModal}
+            onEdit={(job) => {
+              closeDetailsModal();
+              handleEdit(job);
+            }}
+            onDelete={(id) => {
+              closeDetailsModal();
 
-      {/* DETAILS */}
-      <Dialog
-        isOpen={isDetailsModalOpen} 
-        onClose={closeDetailsModal}
-      >
-        <JobDetails
-          job={selectedJob}
-          onClose={closeDetailsModal}
-          onEdit={(job) => {
-            closeDetailsModal();
-            handleEdit(job);
-          }}
-          onDelete={(id) => {
-            closeDetailsModal(); 
-            handleDelete(id);
-          }}
-        />
-      </Dialog>
-
-      {/* loading state */}
-      {loading && <p>Loading jobs...</p>}
-
-      {/*result message 
-      {filteredJobs.length === 0 ? (
-        <p>No jobs found for {searchTerm}</p>
-      ) : (
-        <p>
-          Showing {filteredJobs.length}{' '}
-          {filteredJobs.length === 1 ? 'job' : 'jobs'}
-        </p>
-      )}
-      */}
-      
-      {view === 'kanban' ? (
-        <KanbanBoard
-          jobs={filteredJobs}
-          statuses={statuses}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-          openDetailsModal={openDetailsModal}
-        />
-      ) : (
-        <JobTable
-          jobs={filteredJobs}
-          allJobs={jobs}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-          openDetailsModal={openDetailsModal}
-        />
-      )}
-      
+              if (section === 'archive') {
+                handlePermanentDelete(id);
+              } else {
+                handleArchive(id);
+              }
+            }}
+          />
+        </Dialog>
+      </main>
     </div>
   );
 }
