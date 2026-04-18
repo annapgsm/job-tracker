@@ -10,14 +10,30 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-// Middleware
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // allow tools like Postman / curl / server-to-server requests
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
+
 app.use(express.json());
 
-//Routes
 app.use("/job-applications", jobApplicationRoutes);
 
-// Test route
 app.get("/", (req, res) => {
   res.send("API is running");
 });
@@ -25,5 +41,3 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-;
-
