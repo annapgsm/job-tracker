@@ -7,51 +7,57 @@ function JobDetails({ job, onClose, onEdit, onDelete }) {
 
   return (
     <div className="job-details">
-
       <div className="job-details-header">
-        <p className="job-details-eyebrow">{job.status}</p>
-        <br/>
+        <span className={`status-badge status-${job.status.toLowerCase()}`}>
+          {job.status}
+        </span>
+
         <h2>{job.companyName}</h2>
-        <p><strong>Job Title:</strong> {job.jobTitle}</p>
-      </div>  
+        <p className="job-details-role">{job.jobTitle}</p>
+      </div>
 
       <div className="job-details-actions">
-        <button type="button" aria-label="Edit job" onClick={() => onEdit(job)}>
+        <button
+          type="button"
+          aria-label="Edit job"
+          onClick={() => onEdit(job)}
+        >
           <FaEdit />
         </button>
-        <button type="button" aria-label="Delete job" onClick={() => onDelete(job._id)}>
+
+        <button
+          type="button"
+          aria-label="Delete job"
+          onClick={() => onDelete(job._id)}
+        >
           <FaTrash />
         </button>
-      </div> 
+      </div>
 
       <div className="job-details-content">
-        {(job.location || job.platform) && (
+        {(job.location || job.platform || job.salary || job.contact) && (
           <div className="job-details-section">
             <h3>Overview</h3>
-            {job.location && (
-              <p>
-                <span className="job-details-label">Location</span>
-                <span>{job.location}</span>
-              </p>
-            )}
-            {job.platform && (
-              <p>
-                <span className="job-details-label">Platform</span>
-                <span>{job.platform}</span>
-              </p>
-            )}
-            {job.salary && (
-              <p>
-                <span className="job-details-label">Salary</span>
-                <span>{job.salary}</span>
-              </p>
-            )}
-            {job.contact && (
-              <p>
-                <span className="job-details-label">Contact</span>
-                <span>{job.contact}</span>
-              </p>
-            )}
+
+            <p>
+              <span className="job-details-label">Location</span>
+              <span>{job.location?.trim() || '-'}</span>
+            </p>
+
+            <p>
+              <span className="job-details-label">Platform</span>
+              <span>{job.platform?.trim() || '-'}</span>
+            </p>
+
+            <p>
+              <span className="job-details-label">Salary</span>
+              <span>{job.salary ?? '-'}</span>
+            </p>
+
+            <p>
+              <span className="job-details-label">Contact</span>
+              <span>{job.contact?.trim() || '-'}</span>
+            </p>
           </div>
         )}
 
@@ -72,25 +78,27 @@ function JobDetails({ job, onClose, onEdit, onDelete }) {
         {job.jobDescription && (
           <div className="job-details-section">
             <h3>Description</h3>
-            <p>{job.jobDescription}</p>
+            <p className="job-details-text">{job.jobDescription}</p>
           </div>
         )}
 
         {job.notes && (
           <div className="job-details-section">
             <h3>Notes</h3>
-            <p>{job.notes}</p>
+            <p className="job-details-text">{job.notes}</p>
           </div>
         )}
 
         <div className="job-details-section">
           <h3>Activity</h3>
+
           {job.dateSaved && (
             <p>
               <span className="job-details-label">Saved</span>
               <span>{new Date(job.dateSaved).toLocaleDateString()}</span>
             </p>
           )}
+
           {getLatestDate(job) && (
             <p>
               <span className="job-details-label">Last activity</span>

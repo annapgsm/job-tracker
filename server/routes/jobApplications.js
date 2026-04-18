@@ -26,9 +26,9 @@ router.put("/:id", async (req, res) => {
         req.body.dateUpdated = new Date();
 
         const updatedJob = await JobApplication.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, runValidator: true} //new: true returns updated doc, runvalidator ensures schema validation applies on update
+            req.params.id,
+            req.body,
+            { returnDocument: 'after', runValidator: true} //runvalidator ensures schema validation applies on update
         );
 
         res.json(updatedJob);

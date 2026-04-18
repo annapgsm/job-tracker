@@ -51,6 +51,10 @@ const jobApplicationSchema = new mongoose.Schema(
             trim: true,
             default: "",
         },
+        archived: {
+            type: Boolean,
+            default: false,
+        },
         dateSaved: {
             type: Date,
             default: Date.now,
