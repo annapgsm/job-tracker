@@ -21,7 +21,7 @@ The frontend communicates with the backend via a REST API.
 ## Preview
 
 ### Kanban Board
-![Kanban Board](./client/screenshots/kanban.png)
+![Kanban Board](./client/screenshots/kanban.gif)
 
 ### Drag & Drop
 ![Drag and Drop](./client/screenshots/dragdrop.gif)
