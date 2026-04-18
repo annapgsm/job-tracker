@@ -27,7 +27,7 @@ The frontend communicates with the backend via a REST API.
 <img src="./client/screenshots/dragdrop.gif" width="700" />
 
 ### Job Details
-<img src="./client/screenshots/details.png" width="700" />
+<img src="./client/screenshots/details.png" width="300" />
 
 
 ### Table View
