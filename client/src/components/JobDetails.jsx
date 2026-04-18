@@ -39,33 +39,25 @@ function JobDetails({ job, onClose, onEdit, onDelete }) {
           <div className="job-details-section">
             <h3>Overview</h3>
 
-            {job.location && (
-              <p>
-                <span className="job-details-label">Location</span>
-                <span>{job.location}</span>
-              </p>
-            )}
+            <p>
+              <span className="job-details-label">Location</span>
+              <span>{job.location?.trim() || '-'}</span>
+            </p>
 
-            {job.platform && (
-              <p>
-                <span className="job-details-label">Platform</span>
-                <span>{job.platform}</span>
-              </p>
-            )}
+            <p>
+              <span className="job-details-label">Platform</span>
+              <span>{job.platform?.trim() || '-'}</span>
+            </p>
 
-            {job.salary && (
-              <p>
-                <span className="job-details-label">Salary</span>
-                <span>{job.salary}</span>
-              </p>
-            )}
+            <p>
+              <span className="job-details-label">Salary</span>
+              <span>{job.salary ?? '-'}</span>
+            </p>
 
-            {job.contact && (
-              <p>
-                <span className="job-details-label">Contact</span>
-                <span>{job.contact}</span>
-              </p>
-            )}
+            <p>
+              <span className="job-details-label">Contact</span>
+              <span>{job.contact?.trim() || '-'}</span>
+            </p>
           </div>
         )}
 

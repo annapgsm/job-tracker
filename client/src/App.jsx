@@ -79,7 +79,7 @@ function App() {
       jobTitle: formData.jobTitle.trim(),
       jobLink: formData.jobLink.trim(),
       jobDescription: formData.jobDescription.trim(),
-      salary: formData.salary ? Number(formData.salary) : undefined,
+      salary: formData.salary === '' ? null : Number(formData.salary),      
       platform: formData.platform.trim(),
       location: formData.location.trim(),
       contact: formData.contact.trim(),
