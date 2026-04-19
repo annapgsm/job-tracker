@@ -45,6 +45,8 @@ function App() {
   const isDetailsModalOpen = selectedJob !== null;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
 
   useEffect(() => {
     fetchJobs();
@@ -256,7 +258,11 @@ function App() {
 
   return (
     <div className="app-container">
-      <aside className="sidebar">
+      <div
+        className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`}
+        onClick={() => setIsSidebarOpen(false)}
+      />
+      <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
           <div className="app-logo">J</div>
           <div className="app-name">JobTrack</div>
@@ -268,7 +274,10 @@ function App() {
           <button
             type="button"
             className={`nav-item ${section === 'pipeline' ? 'active' : ''}`}
-            onClick={() => setSection('pipeline')}
+            onClick={() => {
+              setSection('pipeline') 
+              setIsSidebarOpen(false);
+            }}
           >
             <span className="nav-icon" aria-hidden="true">💼</span>
             Job Pipeline
@@ -277,7 +286,10 @@ function App() {
           <button
             type="button"
             className={`nav-item ${section === 'archive' ? 'active' : ''}`}
-            onClick={() => setSection('archive')}
+            onClick={() => {
+              setSection('archive');
+              setIsSidebarOpen(false);
+            }}
           >
             <span className="nav-icon" aria-hidden="true">📥</span>
             Archived Jobs
@@ -288,78 +300,112 @@ function App() {
       <main className="main-content">
         <header className="header">
           <div className="header-left">
-            <h1 className="page-title">
-              {section === 'pipeline' ? 'Job Pipeline' : 'Archive'}
-            </h1>
+            <div className="header-top">
+              <button
+                type="button"
+                className="mobile-menu-toggle"
+                aria-label="Open menu"
+                onClick={() => setIsSidebarOpen(true)}
+              >
+                ☰
+              </button>
 
-            {section === 'pipeline' && (
-              <div className="view-toggle">
+              <h1 className="page-title">
+                {section === 'pipeline' ? 'Job Pipeline' : 'Archive'}
+              </h1>
+
+              {section === 'pipeline' && (
                 <button
                   type="button"
-                  onClick={() => setView('kanban')}
-                  className={view === 'kanban' ? 'active' : ''}
+                  className="mobile-header-toggle"
+                  aria-label={isMobileHeaderExpanded ? 'Hide controls' : 'Show controls'}
+                  onClick={() => setIsMobileHeaderExpanded((prev) => !prev)}
                 >
-                  Board
+                  {isMobileHeaderExpanded ? '-' : '+'}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setView('table')}
-                  className={view === 'table' ? 'active' : ''}
-                >
-                  List
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {section === 'pipeline' && (
-            <div className="header-controls">
-              <div className="search-wrapper">
-                <span className="search-icon" aria-hidden="true">🔍</span>
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search companies or titles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <div
+              className={`mobile-header-panel ${
+                isMobileHeaderExpanded ? 'active' : ''
+              }`}
+            >
+              <div className="header-controls">
+                <div className="view-toggle">
+                  <button
+                    type="button"
+                    onClick={() => setView('kanban')}
+                    className={view === 'kanban' ? 'active' : ''}
+                  >
+                    Board
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setView('table')}
+                    className={view === 'table' ? 'active' : ''}
+                  >
+                    List
+                  </button>
+                </div>
+
+                <div className="search-wrapper">
+                  <span className="search-icon" aria-hidden="true">🔍</span>
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search companies or titles..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                <select
+                  className="filter-select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="All">All Jobs</option>
+                  {statuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleClearFilters}
+                  disabled={searchTerm === '' && statusFilter === 'All'}
+                >
+                  Clear
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={openAddModal}
+                >
+                  <span aria-hidden="true">+</span>
+                  Add Job
+                </button>
               </div>
-
-              <select
-                className="filter-select"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="All">All Jobs</option>
-                {statuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={handleClearFilters}
-                disabled={searchTerm === '' && statusFilter === 'All'}
-              >
-                Clear
-              </button>
-
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={openAddModal}
-              >
-                <span aria-hidden="true">+</span>
-                Add Job
-              </button>
             </div>
           )}
         </header>
 
+
         <div className="content">
+          {section === 'pipeline' && view === 'kanban' && (
+            <div className="mobile-hint">
+              <span>← Swipe</span>
+              <span>•</span>
+              <span>Hold to move →</span>
+            </div>
+          )}
           {error && <p className="feedback-message error-message">{error}</p>}
           {loading && <p className="feedback-message">Loading jobs...</p>}
 
