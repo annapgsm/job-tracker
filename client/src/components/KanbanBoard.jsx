@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 function KanbanBoard({
@@ -12,6 +12,15 @@ function KanbanBoard({
   const [draggedJobId, setDraggedJobId] = useState(null);
   const [dragOverStatus, setDragOverStatus] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const touchDragRef = useRef({
+    active: false,
+    jobId: null,
+    startX: 0,
+    startY: 0,
+    hasMoved: false,
+    pressTimer: null,
+  });
 
   const getLatestDate = (job) => job.dateUpdated || job.dateSaved;
 
@@ -62,6 +71,94 @@ function KanbanBoard({
     setDragOverStatus(null);
 
     onMoveJob(jobId, newStatus);
+  }
+
+  function handleTouchStart(e, jobId) {
+    const touch = e.touches[0];
+
+    touchDragRef.current.startX = touch.clientX;
+    touchDragRef.current.startY = touch.clientY;
+    touchDragRef.current.jobId = jobId;
+    touchDragRef.current.hasMoved = false;
+    touchDragRef.current.active = false;
+
+    touchDragRef.current.pressTimer = setTimeout(() => {
+      touchDragRef.current.active = true;
+      setDraggedJobId(jobId);
+      setIsDragging(true);
+    }, 180);
+  }
+
+  function handleTouchMove(e) {
+    const touch = e.touches[0];
+    const dx = Math.abs(touch.clientX - touchDragRef.current.startX);
+    const dy = Math.abs(touch.clientY - touchDragRef.current.startY);
+
+    if (dx > 8 || dy > 8) {
+      touchDragRef.current.hasMoved = true;
+    }
+
+    if (!touchDragRef.current.active) {
+      if (dy > 10) {
+        clearTimeout(touchDragRef.current.pressTimer);
+      }
+      return;
+    }
+
+    e.preventDefault();
+
+    const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+    const dropZone = elements.find((el) => el.dataset?.dropStatus);
+
+    if (dropZone) {
+      const status = dropZone.dataset.dropStatus;
+      if (dragOverStatus !== status) {
+        setDragOverStatus(status);
+      }
+    } else if (dragOverStatus !== null) {
+      setDragOverStatus(null);
+    }
+  }
+
+  function handleTouchEnd(e, job) {
+    clearTimeout(touchDragRef.current.pressTimer);
+
+    if (!touchDragRef.current.active) {
+      if (!touchDragRef.current.hasMoved) {
+        openDetailsModal(job);
+      }
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+    const dropZone = elements.find((el) => el.dataset?.dropStatus);
+    const newStatus = dropZone?.dataset?.dropStatus || null;
+
+    const jobId = touchDragRef.current.jobId;
+
+    touchDragRef.current.active = false;
+    touchDragRef.current.jobId = null;
+    touchDragRef.current.hasMoved = false;
+
+    setDraggedJobId(null);
+    setDragOverStatus(null);
+    setIsDragging(false);
+
+    if (newStatus && newStatus !== job.status) {
+      onMoveJob(jobId, newStatus);
+    }
+  }
+
+  function handleTouchCancel() {
+    clearTimeout(touchDragRef.current.pressTimer);
+    touchDragRef.current.active = false;
+    touchDragRef.current.jobId = null;
+    touchDragRef.current.hasMoved = false;
+
+    setDraggedJobId(null);
+    setDragOverStatus(null);
+    setIsDragging(false);
   }
 
   function getStatusClass(status) {
@@ -142,6 +239,7 @@ function KanbanBoard({
               className={`cards-container ${
                 dragOverStatus === status ? 'cards-container--active' : ''
               }`}
+              data-drop-status={status}
               onDragOver={(e) => handleDragOver(e, status)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, status)}
@@ -163,6 +261,10 @@ function KanbanBoard({
                         openDetailsModal(job);
                       }
                     }}
+                    onTouchStart={(e) => handleTouchStart(e, job._id)}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={(e) => handleTouchEnd(e, job)}
+                    onTouchCancel={handleTouchCancel}
                   >
                     <div className="card-header">
                       <div className="card-company">
@@ -181,6 +283,32 @@ function KanbanBoard({
                         <span className="meta-icon" aria-hidden="true">📅</span>
                         <span>{formatLatestActivity(job)}</span>
                       </div>
+                    </div>
+
+                    <div className="kanban-actions">
+                      <button
+                        type="button"
+                        aria-label="Edit job"
+                        className="icon-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(job);
+                        }}
+                      >
+                        <FaEdit />
+                      </button>
+
+                      <button
+                        type="button"
+                        aria-label="Archive job"
+                        className="icon-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(job._id);
+                        }}
+                      >
+                        <FaTrash />
+                      </button>
                     </div>
                   </article>
                 ))
