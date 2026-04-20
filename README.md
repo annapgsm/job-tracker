@@ -41,13 +41,15 @@ The frontend communicates with the backend via a REST API.
 ## Features
 
 - Full CRUD functionality for managing job applications via REST API
-- Kanban board with drag and drop (HTML5 Drag & Drop API)
+- Kanban board with drag and dro (desktop + long-press touch support on mobile)
 - Optimistic UI updates with backend synchronization
 - Table view for structured comparison and quick scanning
-- Detailed job view with structured sections (overview, notes, activity)
+- Detailed job view with notes and additional metadata
 - Search and filtering using derived state (no duplicated data)
 - Archive system (soft delete with restore + permanent delete)
 - Activity tracking via `dateSaved` and `dateUpdated`
+- Fully responsive layout with adaptive UI patterns across desktop, tablet, and mobile
+
 
 ## Tech Stack
 
@@ -75,6 +77,7 @@ This project was built as a fully separated full-stack application, with a clear
 - Centralized state in `App.jsx` as a single source of truth  
 - Derived state for filtering and sorting (no duplicated data)  
 - Component-driven structure (KanbanBoard, JobTable, JobForm, etc.)
+- Responsive UI with breakpoint-specific layout logic
 
 ### Backend (server)
 
@@ -198,9 +201,9 @@ Environment variables are used to configure the API URL, allowing the app to con
 ## Learnings
 
 - Designing and implementing a full-stack architecture from scratch  
-- Managing complex UI state while maintaining a single source of truth  
-- Using derived state to avoid unnecessary data duplication  
-- Implementing optimistic updates with proper error handling  
-- Handling drag & drop interactions without breaking UI behavior  
-- Building product-like features such as archive systems instead of basic CRUD  
-- Designing and maintaining communication between independently deployed services
+- Structuring frontend state as a single source of truth with derived state for filtering and sorting  
+- Implementing optimistic UI updates with rollback handling for async operations  
+- Handling drag & drop interactions across desktop (HTML5 API) and mobile (touch events)  
+- Designing responsive interfaces with adaptive behavior, not just layout scaling   
+- Building product-oriented features such as archive systems instead of basic CRUD flows  
+- Managing communication between independently deployed frontend and backend services  

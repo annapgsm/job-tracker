@@ -1078,7 +1078,6 @@ form {
 .empty-icon {
   width: 54px;
   height: 54px;
-  background: var(--bg-secondary);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
